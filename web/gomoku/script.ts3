@@ -1,0 +1,144 @@
+const boardSize = 19; // Standard 19x19 Go board
+
+const canvas = document.getElementById('goBoard') as HTMLCanvasElement;
+const ctx = canvas.getContext('2d');
+
+const offscreenCanvas = document.createElement('canvas');
+offscreenCanvas.width = canvas.width;
+offscreenCanvas.height = canvas.height;
+const offscreenCtx = offscreenCanvas.getContext('2d');
+
+const boardPath = 'images/wood_full_original.jpg';
+const blackStonePath = 'images/black_00.png';
+const whiteStonePath = 'images/white_00.png';
+
+const boardImg = new Image();
+boardImg.src = boardPath;
+
+const blackStone = new Image();
+blackStone.src = blackStonePath;
+
+const whiteStone = new Image();
+whiteStone.src = whiteStonePath;
+
+interface AnimGame {
+    stoneX: number;
+    stoneY: number;
+    gameLoopId: number | null;
+}
+
+const game: AnimGame = {
+    stoneX: 0,
+    stoneY: 0,
+    gameLoopId: null,
+};
+
+
+// Handle image loading
+boardImg.onload = () => {
+    blackStone.onload = () => {}
+    whiteStone.onload = () => {}
+
+    // canvas.width = boardImg.width;
+    // canvas.height = boardImg.height;
+    // offscreenCtx.drawImage(boardImg, 0, 0, canvas.width, canvas.height);
+    
+
+    // Optional: Save the canvas as an image or perform other actions
+    // const canvasDataURL = canvas.toDataURL('image/jpeg');
+    // console.log(canvasDataURL);
+    
+    startGameLoop(game);
+};
+
+
+// Function to draw the Go board grid
+function drawGrid() {
+    const gridSize = canvas.width / (boardSize + 1);
+    const borderSize = gridSize;
+
+    // Draw grid lines
+    offscreenCtx.strokeStyle = 'black';
+    offscreenCtx.lineWidth = 1;
+
+    for (let i = 0; i <= boardSize ; i++) {
+        const pos = i * gridSize;
+
+        // Vertical lines
+        offscreenCtx.beginPath();
+        offscreenCtx.moveTo(pos, borderSize);
+        offscreenCtx.lineTo(pos, canvas.height - borderSize);
+        offscreenCtx.stroke();
+
+        // Horizontal lines
+        offscreenCtx.beginPath();
+        offscreenCtx.moveTo(borderSize, pos);
+        offscreenCtx.lineTo(canvas.width - borderSize, pos);
+        offscreenCtx.stroke();
+    }
+
+    // Draw star points (for a 19x19 board)
+    if (boardSize === 19) {
+        const starPoints = [3 + 1, 9 + 1, 15 + 1];
+        offscreenCtx.fillStyle = 'black';
+
+        starPoints.forEach(x => {
+            starPoints.forEach(y => {
+                const centerX = x * gridSize;
+                const centerY = y * gridSize;
+                offscreenCtx.beginPath();
+                offscreenCtx.arc(centerX, centerY, 3, 0, 2 * Math.PI);
+                offscreenCtx.fill();
+            });
+        });
+    }
+}
+
+function placeStone(x: number, y: number, image: HTMLImageElement): void {
+    const gridSize = canvas.width / (boardSize + 1);
+    const borderSize = gridSize;
+
+    // Calculate the pixel coordinates for the center of the grid intersection
+    const coordX = (x - 1) * gridSize - gridSize / 2 + borderSize;
+    const coordY = (y - 1) * gridSize - gridSize / 2 + borderSize;
+
+    // Draw the image at the calculated coordinates
+    offscreenCtx.drawImage(image, coordX , coordY, gridSize, gridSize);
+}
+
+
+
+// Main game loop function
+function gameLoop(game: AnimGame): void {
+    const { stoneX, stoneY, gameLoopId} = game;
+    const gridSize = canvas.width / (boardSize + 1);
+
+    offscreenCtx.drawImage(boardImg, 0, 0, canvas.width, canvas.height);
+    drawGrid();
+    placeStone(10, 10, blackStone);
+    placeStone(1, 1, whiteStone);
+    placeStone(19, 19, whiteStone);
+    placeStone(1, 19, whiteStone);
+    placeStone(19, 1, whiteStone);
+
+
+    // Clear the canvas
+    // ctx.clearRect(0, 0, canvas.width, canvas.height);
+    offscreenCtx.drawImage(blackStone, stoneX , stoneY, gridSize, gridSize);
+    ctx.drawImage(offscreenCanvas, 0, 0);
+
+    game.stoneX = stoneX + 1;
+}
+
+// Start the game loop
+function startGameLoop(game: AnimGame): void {
+    if (!game.gameLoopId) {
+        game.gameLoopId = setInterval(() => {
+            // Call your game loop logic here
+            gameLoop(game);
+        }, 1000 / 60); // Set the desired frame rate (e.g., 60 FPS)
+    }
+}
+
+// loadBoradImage();
+drawGrid();

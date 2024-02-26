@@ -1,0 +1,58 @@
+const canvas = document.getElementById('goBoard') as HTMLCanvasElement;
+const ctx = canvas.getContext('2d');
+
+const offscreenCanvas = document.createElement('canvas');
+offscreenCanvas.width = canvas.width;
+offscreenCanvas.height = canvas.height;
+const offscreenCtx = offscreenCanvas.getContext('2d');
+
+const imagePath = 'images/wood_full_original.jpg';
+const blackStonePath = 'images/black_00.png';
+const img = new Image();
+img.src = imagePath;
+
+const blackStone = new Image();
+blackStone.src = blackStonePath;
+
+interface AnimGame {
+    stoneX: number;
+    stoneY: number;
+    gameLoopId: number | null;
+}
+
+const game: AnimGame = {
+    stoneX: 0,
+    stoneY: 0,
+    gameLoopId: null,
+};
+
+
+
+
+img.onload = () => {
+    blackStone.onload = () => {}
+    offscreenCtx.drawImage(img, 0, 0, canvas.width, canvas.height);
+    startGameLoop(game);
+};
+
+function gameLoop(game: AnimGame): void {
+    const { stoneX, stoneY, gameLoopId } = game;
+
+    if (offscreenCtx) {
+        offscreenCtx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        offscreenCtx.drawImage(blackStone, stoneX, stoneY, 20, 20);
+        // ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(offscreenCanvas, 0, 0);
+
+        // Update stone position
+        game.stoneX = stoneX + 1;
+    }
+}
+
+function startGameLoop(game: AnimGame): void {
+    if (!game.gameLoopId) {
+        game.gameLoopId = setInterval(() => {
+            gameLoop(game);
+        }, 1000 / 60);
+    }
+}

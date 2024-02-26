@@ -1,0 +1,186 @@
+const canvas = document.getElementById('xonixCanvas') as HTMLCanvasElement;
+const ctx = canvas.getContext('2d');
+
+document.addEventListener('keydown', handleKeyDown);
+document.addEventListener('keyup', handleKeyUp);
+
+const keys = {
+    left: false,
+    right: false,
+    up: false,
+    down: false,
+};
+
+
+const player = {
+    x: 50,
+    y: 50,
+    size: 20,
+    speed: 2,
+    isMoving: false,
+};
+
+const enemies = [
+    { x: 200, y: 100, size: 20, speed: 1 },
+    { x: 100, y: 200, size: 20, speed: 1 },
+    { x: 300, y: 300, size: 20, speed: 1 },
+];
+
+const enemyColors = ['#FF5733', '#33FF57', '#5733FF'];
+
+let score = 0;
+
+function drawPlayer() {
+    ctx.fillStyle = 'blue';
+    ctx.fillRect(player.x, player.y, player.size, player.size);
+}
+
+function drawEnemies() {
+    for (let i = 0; i < enemies.length; i++) {
+        ctx.fillStyle = enemyColors[i % enemyColors.length];
+        ctx.fillRect(enemies[i].x, enemies[i].y, enemies[i].size, enemies[i].size);
+    }
+}
+
+// function movePlayer() {
+//     if (player.isMoving) {
+//         if (player.x + player.size < canvas.width) {
+//             player.x += player.speed;
+//         }
+//     }
+// }
+
+function movePlayer() {
+    if (keys.left && player.x > 0) {
+        player.x -= player.speed;
+    }
+    if (keys.right && player.x + player.size < canvas.width) {
+        player.x += player.speed;
+    }
+    if (keys.up && player.y > 0) {
+        player.y -= player.speed;
+    }
+    if (keys.down && player.y + player.size < canvas.height) {
+        player.y += player.speed;
+    }
+}
+
+function moveEnemies() {
+    for (let i = 0; i < enemies.length; i++) {
+        enemies[i].x += enemies[i].speed;
+        if (enemies[i].x + enemies[i].size > canvas.width || enemies[i].x < 0) {
+            enemies[i].speed = -enemies[i].speed;
+        }
+    }
+}
+
+function checkCollision() {
+    for (let i = 0; i < enemies.length; i++) {
+        const dx = player.x - enemies[i].x;
+        const dy = player.y - enemies[i].y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+
+        if (distance < player.size + enemies[i].size) {
+            // Collision detected
+            gameOver();
+        }
+    }
+}
+
+function gameOver() {
+    // Clear the canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Display a game over message
+    ctx.fillStyle = 'red';
+    ctx.font = '30px Arial';
+    ctx.fillText('Game Over', canvas.width / 2 - 80, canvas.height / 2);
+
+    // Optionally, you can reset the player position and score
+    player.x = canvas.width / 2 - player.size / 2;
+    player.y = canvas.height / 2 - player.size / 2;
+    score = 0;
+
+    // Stop the game loop (if you have one)
+    // You might need to define a game loop and handle its termination accordingly
+    // Example: clearInterval(gameLoop);
+
+    // Optionally, restart the game after a delay
+    // setTimeout(startGame, 3000); // Restart the game after 3 seconds
+}
+
+function handleKeyDown(event: KeyboardEvent) {
+    // Update the keys object when a key is pressed
+    if (event.key === 'ArrowLeft' || event.key === 'Left') {
+        keys.left = true;
+    } else if (event.key === 'ArrowRight' || event.key === 'Right') {
+        keys.right = true;
+    } else if (event.key === 'ArrowUp' || event.key === 'Up') {
+        keys.up = true;
+    } else if (event.key === 'ArrowDown' || event.key === 'Down') {
+        keys.down = true;
+    }
+}
+
+function handleKeyUp(event: KeyboardEvent) {
+    // Update the keys object when a key is released
+    if (event.key === 'ArrowLeft' || event.key === 'Left') {
+        keys.left = false;
+    } else if (event.key === 'ArrowRight' || event.key === 'Right') {
+        keys.right = false;
+    } else if (event.key === 'ArrowUp' || event.key === 'Up') {
+        keys.up = false;
+    } else if (event.key === 'ArrowDown' || event.key === 'Down') {
+        keys.down = false;
+    }
+}
+
+
+
+
+
+
+let gameLoopId: number | null = null;
+
+function gameLoop() {
+    // Clear the canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Update and draw the player
+    movePlayer();
+    drawPlayer();
+
+    // Update and draw the enemies
+    moveEnemies();
+    drawEnemies();
+
+    // Check for collisions
+    checkCollision();
+
+    // // Optionally, update and display the score
+    // ctx.fillStyle = 'black';
+    // ctx.font = '20px Arial';
+    // ctx.fillText(`Score: ${score}`, 10, 30);
+
+    // Continue the game loop
+    gameLoopId = requestAnimationFrame(gameLoop);
+}
+
+
+
+// Implement a function to stop the game loop when the game is over or paused
+function stopGameLoop() {
+    if (gameLoopId !== null) {
+        cancelAnimationFrame(gameLoopId);
+        gameLoopId = null;
+    }
+}
+
+// function startGame() {
+//     // Initialize player, enemies, score, etc.
+//     // Start the game loop
+//     // Example: gameLoop = setInterval(updateGame, 1000 / 60);
+// }
+
+// Start the game loop
+gameLoop();

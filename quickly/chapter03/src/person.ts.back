@@ -1,0 +1,39 @@
+class Person {
+    public firstName = '';
+    public lastName = '';
+    private age = 0;
+
+    constructor(firstName: string, lastName:string, age:number) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.age = age;
+    }
+    
+
+    sayHello() : string{
+        return `My name is ${this.firstName} ${this.lastName}`;
+    }
+
+}
+
+
+class Employee extends Person{
+    department = '';
+
+    reviewPerformance():void{
+        this.sayHello();
+        // this.increasePay(5);
+    }
+
+    // increasePay(percent: number):void {
+    //     this.
+    // }
+}
+
+const pers = new Person('John','Smith',29);
+// const empl = new Employee();
+
+
+// console.log(pers.age)
+
+// empl.

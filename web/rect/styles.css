@@ -1,0 +1,11 @@
+body {
+    margin: 0;
+    overflow: hidden;
+}
+
+.rectangle {
+    width: 100px;
+    height: 50px;
+    background-color: blue;
+    position: absolute;
+}

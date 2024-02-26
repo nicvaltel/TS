@@ -1,0 +1,102 @@
+const boardSize = 19; // Standard 19x19 Go board
+
+const canvas = document.getElementById('goBoard') as HTMLCanvasElement;
+const ctx = canvas.getContext('2d');
+
+const imagePath = 'images/wood_full_original.jpg';
+const blackStonePath = 'images/black_00.png';
+const whiteStonePath = 'images/white_00.png';
+
+const img = new Image();
+img.src = imagePath;
+
+const blackStone = new Image();
+blackStone.src = blackStonePath;
+
+const whiteStone = new Image();
+whiteStone.src = whiteStonePath;
+
+
+
+
+// Handle image loading
+img.onload = () => {
+    blackStone.onload = () => {}
+    whiteStone.onload = () => {}
+
+
+    // canvas.width = img.width;
+    // canvas.height = img.height;
+    // ctx.drawImage(img, 0, 0);
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+    
+
+    // Optional: Save the canvas as an image or perform other actions
+    // const canvasDataURL = canvas.toDataURL('image/jpeg');
+    // console.log(canvasDataURL);
+    drawGrid();
+    placeStone(10, 10, blackStone);
+    placeStone(1, 1, whiteStone);
+    placeStone(19, 19, whiteStone);
+    placeStone(1, 19, whiteStone);
+    placeStone(19, 1, whiteStone);
+};
+
+
+// Function to draw the Go board grid
+function drawGrid() {
+    const gridSize = canvas.width / (boardSize + 1);
+    const borderSize = gridSize;
+
+    // Draw grid lines
+    ctx.strokeStyle = 'black';
+    ctx.lineWidth = 1;
+
+    for (let i = 0; i <= boardSize ; i++) {
+        const pos = i * gridSize;
+
+        // Vertical lines
+        ctx.beginPath();
+        ctx.moveTo(pos, borderSize);
+        ctx.lineTo(pos, canvas.height - borderSize);
+        ctx.stroke();
+
+        // Horizontal lines
+        ctx.beginPath();
+        ctx.moveTo(borderSize, pos);
+        ctx.lineTo(canvas.width - borderSize, pos);
+        ctx.stroke();
+    }
+
+    // Draw star points (for a 19x19 board)
+    if (boardSize === 19) {
+        const starPoints = [3 + 1, 9 + 1, 15 + 1];
+        ctx.fillStyle = 'black';
+
+        starPoints.forEach(x => {
+            starPoints.forEach(y => {
+                const centerX = x * gridSize;
+                const centerY = y * gridSize;
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, 3, 0, 2 * Math.PI);
+                ctx.fill();
+            });
+        });
+    }
+}
+
+function placeStone(x: number, y: number, image: HTMLImageElement): void {
+    const gridSize = canvas.width / (boardSize + 1);
+    const borderSize = gridSize;
+
+    // Calculate the pixel coordinates for the center of the grid intersection
+    const coordX = (x - 1) * gridSize - gridSize / 2 + borderSize;
+    const coordY = (y - 1) * gridSize - gridSize / 2 + borderSize;
+
+    // Draw the image at the calculated coordinates
+    ctx.drawImage(image, coordX , coordY, gridSize, gridSize);
+}
+
+
+// loadBoradImage();
+drawGrid();

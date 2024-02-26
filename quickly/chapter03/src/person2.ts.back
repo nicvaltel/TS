@@ -1,0 +1,27 @@
+class Person {
+    constructor(public firstName: string, public lastName: string, private age: number) {}
+
+    sellStock(symbol : string, numberOfShares: number){
+        console.log(`Selling ${numberOfShares} of ${symbol}`);
+    }
+}
+
+class Employee extends Person{
+    constructor(firstName: string, lastName: string, age: number, public department: string) {
+        super(firstName, lastName, age)
+    }
+
+    sellStock(symbol: string, shares: number): void {
+        super.sellStock(symbol, shares);
+        this.reportToComplinance(symbol,shares);
+    }
+
+    private reportToComplinance(symbol: string, shares: number) {
+        console.log(`${this.lastName} from ${this.department} sold ${shares}`);
+    }
+}
+
+const empl1 = new Employee('Joe','Smith',29, 'Accounting');
+console.log(empl1);
+empl1.sellStock('IBM', 100);
+
