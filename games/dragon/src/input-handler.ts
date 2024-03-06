@@ -1,13 +1,15 @@
-import { Keys, ShootKey } from "./types.js";
+import { Keys, UserInput } from "./types.js";
 
-export function initListener(keys: Set<Keys>, shotKey:ShootKey) {
+export function initListener(inputBuffer: UserInput) {
+    const keys = inputBuffer.inputKeys;
+    
     window.addEventListener('keydown', (e:KeyboardEvent) => {
         if (e.key === 'ArrowUp'  && !keys.has(Keys.Up)){
             keys.add(Keys.Up);
         } else if (e.key === 'ArrowDown' && !keys.has(Keys.Down)){
             keys.add(Keys.Down);
         } else if(e.key === ' '){
-            shotKey.shootFlag = true;
+            inputBuffer.shootKey = true;
         }
     });
     window.addEventListener('keyup', (e:KeyboardEvent) => {

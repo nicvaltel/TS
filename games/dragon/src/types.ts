@@ -13,12 +13,27 @@ export function drawActor(ctx: CanvasRenderingContext2D, actor: Actor): IO {
     return {};
 }
 
-export type ShootKey = {
-    shootFlag : boolean;
-}
-
 export enum Keys {
     Up,
     Down,
     Fire
+}
+
+export type UserInput = {
+    inputKeys: Set<Keys>;
+    shootKey: boolean;
+}
+
+export function emptyUserInput(): UserInput{
+    return {
+        inputKeys: new Set<Keys>,
+        shootKey: false,
+    }
+}
+
+export function cloneUserInput(inputBuffer: UserInput):UserInput{
+    return {
+        inputKeys: new Set(inputBuffer.inputKeys),
+        shootKey: inputBuffer.shootKey,
+    }
 }

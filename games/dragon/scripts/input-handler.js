@@ -1,5 +1,6 @@
 import { Keys } from "./types.js";
-export function initListener(keys, shotKey) {
+export function initListener(inputBuffer) {
+    const keys = inputBuffer.inputKeys;
     window.addEventListener('keydown', (e) => {
         if (e.key === 'ArrowUp' && !keys.has(Keys.Up)) {
             keys.add(Keys.Up);
@@ -8,7 +9,7 @@ export function initListener(keys, shotKey) {
             keys.add(Keys.Down);
         }
         else if (e.key === ' ') {
-            shotKey.shootFlag = true;
+            inputBuffer.shootKey = true;
         }
     });
     window.addEventListener('keyup', (e) => {

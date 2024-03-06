@@ -1,4 +1,4 @@
-import { Keys } from "./types.js";
+import { Keys, cloneUserInput, emptyUserInput } from "./types.js";
 import { drawPlayer } from "./player.js";
 import { createProjectile, drawProjectile } from "./projectile.js";
 export function createGame(width, height, player, ammo) {
@@ -6,17 +6,19 @@ export function createGame(width, height, player, ammo) {
         width: width,
         height: height,
         player: player,
-        keys: new Set,
-        shootKey: { shootFlag: false },
+        inputBuffer: emptyUserInput(),
+        userInput: emptyUserInput(),
         ammo: ammo,
     };
 }
 export function updateGame(game) {
+    game.userInput = cloneUserInput(game.inputBuffer);
     game = updatePlayer(game);
+    game.inputBuffer.shootKey = game.userInput.shootKey;
     return game;
 }
 function updatePlayer(game) {
-    const keys = game.keys;
+    const keys = game.userInput.inputKeys;
     const player = game.player;
     if (keys.has(Keys.Up)) {
         player.speedY = -player.maxSpeed;
@@ -34,7 +36,7 @@ function updatePlayer(game) {
     else if (player.y < -player.height * 0.5) {
         player.y = -player.height * 0.5;
     }
-    if (game.shootKey.shootFlag) {
+    if (game.userInput.shootKey) {
         game = shootTop(game);
     }
     player.projectiles.forEach(pr => updateProjectile(pr, game.width));
@@ -46,8 +48,7 @@ function shootTop(game) {
         game.player.projectiles.push(createProjectile(game.player.x + 80, game.player.y + 30));
     }
     game.ammo--;
-    game.shootKey.shootFlag = false;
-    console.log('SHOOT!!!');
+    game.userInput.shootKey = false;
     return game;
 }
 function updateProjectile(projectile, gameWidth) {

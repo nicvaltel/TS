@@ -14,7 +14,7 @@ window.addEventListener('load', function (){
     const ctx = canvas.getContext("2d")!;
     const game = createGame(canvas.width, canvas.height, player, ammoStartSize);
 
-    ih.initListener(game.keys, game.shootKey);
+    ih.initListener(game.inputBuffer);
 
     function animate(){
         ctx.clearRect(0,0, canvas.width, canvas.height);

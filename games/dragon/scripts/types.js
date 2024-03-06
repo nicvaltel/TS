@@ -8,3 +8,15 @@ export var Keys;
     Keys[Keys["Down"] = 1] = "Down";
     Keys[Keys["Fire"] = 2] = "Fire";
 })(Keys || (Keys = {}));
+export function emptyUserInput() {
+    return {
+        inputKeys: new Set,
+        shootKey: false,
+    };
+}
+export function cloneUserInput(inputBuffer) {
+    return {
+        inputKeys: new Set(inputBuffer.inputKeys),
+        shootKey: inputBuffer.shootKey,
+    };
+}

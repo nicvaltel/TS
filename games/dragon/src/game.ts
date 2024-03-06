@@ -1,4 +1,4 @@
-import { IO, Keys, ShootKey, drawActor } from "./types.js"
+import { IO, Keys, UserInput, cloneUserInput, drawActor, emptyUserInput } from "./types.js"
 import { Player, drawPlayer } from "./player.js"
 import { Projectile, createProjectile, drawProjectile } from "./projectile.js";
 
@@ -6,8 +6,8 @@ export type Game = {
     width: number;
     height: number;
     player: Player;
-    keys: Set<Keys>;
-    shootKey: ShootKey;
+    inputBuffer : UserInput;
+    userInput : UserInput; // fixed input buffer
     ammo: number;
 }
 
@@ -16,19 +16,21 @@ export function createGame(width: number, height: number, player: Player, ammo: 
         width: width,
         height: height,
         player: player,
-        keys: new Set<Keys>,
-        shootKey: { shootFlag: false },
+        inputBuffer: emptyUserInput(),
+        userInput: emptyUserInput(),
         ammo: ammo,
     }
 }
 
 export function updateGame(game: Game): Game {
+    game.userInput = cloneUserInput(game.inputBuffer);
     game = updatePlayer(game);
+    game.inputBuffer.shootKey = game.userInput.shootKey;
     return game;
 }
 
 function updatePlayer(game: Game): Game {
-    const keys = game.keys;
+    const keys = game.userInput.inputKeys;
     const player = game.player;
 
     if (keys.has(Keys.Up)) {
@@ -48,7 +50,7 @@ function updatePlayer(game: Game): Game {
         player.y = -player.height * 0.5;
     }
 
-    if (game.shootKey.shootFlag) {
+    if (game.userInput.shootKey) {
         game = shootTop(game);
     }
 
@@ -63,8 +65,7 @@ function shootTop(game: Game): Game {
         game.player.projectiles.push(createProjectile(game.player.x + 80, game.player.y + 30));
     }
     game.ammo--;
-    game.shootKey.shootFlag = false;
-    console.log('SHOOT!!!');
+    game.userInput.shootKey = false;
     return game;
 }
 
