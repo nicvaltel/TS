@@ -1,4 +1,4 @@
-import { IO, ShootKey, drawActor } from "./types.js"
+import { IO, Keys, ShootKey, drawActor } from "./types.js"
 import { Player, drawPlayer } from "./player.js"
 import { Projectile, createProjectile, drawProjectile } from "./projectile.js";
 
@@ -6,7 +6,7 @@ export type Game = {
     width: number;
     height: number;
     player: Player;
-    keys: string[];
+    keys: Set<Keys>;
     shootKey: ShootKey;
     ammo: number;
 }
@@ -16,7 +16,7 @@ export function createGame(width: number, height: number, player: Player, ammo: 
         width: width,
         height: height,
         player: player,
-        keys: [],
+        keys: new Set<Keys>,
         shootKey: { shootFlag: false },
         ammo: ammo,
     }
@@ -31,9 +31,9 @@ function updatePlayer(game: Game): Game {
     const keys = game.keys;
     const player = game.player;
 
-    if (keys.includes('ArrowUp')) {
+    if (keys.has(Keys.Up)) {
         player.speedY = -player.maxSpeed;
-    } else if (keys.includes('ArrowDown')) {
+    } else if (keys.has(Keys.Down)) {
         player.speedY = player.maxSpeed;
     } else {
         player.speedY = 0;

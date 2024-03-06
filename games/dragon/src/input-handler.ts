@@ -1,16 +1,20 @@
-import { ShootKey } from "./types.js";
+import { Keys, ShootKey } from "./types.js";
 
-export function initListener(keys: string[], shotKey:ShootKey) {
+export function initListener(keys: Set<Keys>, shotKey:ShootKey) {
     window.addEventListener('keydown', (e:KeyboardEvent) => {
-        if (((e.key === 'ArrowUp') || (e.key === 'ArrowDown')) && keys.indexOf(e.key) === -1) {
-            keys.push(e.key);
+        if (e.key === 'ArrowUp'  && !keys.has(Keys.Up)){
+            keys.add(Keys.Up);
+        } else if (e.key === 'ArrowDown' && !keys.has(Keys.Down)){
+            keys.add(Keys.Down);
         } else if(e.key === ' '){
             shotKey.shootFlag = true;
         }
     });
     window.addEventListener('keyup', (e:KeyboardEvent) => {
-        if (keys.indexOf(e.key) > -1) {
-            keys.splice(keys.indexOf(e.key),1);
+        if (e.key === 'ArrowUp'  && keys.has(Keys.Up)){
+            keys.delete(Keys.Up);
+        } else if (e.key === 'ArrowDown' && keys.has(Keys.Down)){
+            keys.delete(Keys.Down);
         }
     });
 }

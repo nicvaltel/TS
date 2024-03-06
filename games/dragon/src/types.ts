@@ -16,3 +16,9 @@ export function drawActor(ctx: CanvasRenderingContext2D, actor: Actor): IO {
 export type ShootKey = {
     shootFlag : boolean;
 }
+
+export enum Keys {
+    Up,
+    Down,
+    Fire
+}
