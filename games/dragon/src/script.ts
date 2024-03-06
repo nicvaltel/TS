@@ -1,19 +1,20 @@
-import {Player, player, updatePlayer, drawPlayer} from "./player.js"
-import {IO} from "./types.js"
+import {Player, player} from "./player.js"
 import {Game, createGame, drawGame, updateGame} from "./game.js"
 import * as ih from "./input-handler.js"
 
 const gameFiledWidth = 1500;
 const gameFiledHeight = 500;
 
+const ammoStartSize = 20;
+
 window.addEventListener('load', function (){
     const canvas : HTMLCanvasElement = this.document.querySelector("#gameCanvas")!;
     canvas.width = gameFiledWidth;
     canvas.height = gameFiledHeight; 
     const ctx = canvas.getContext("2d")!;
-    const game = createGame(canvas.width, canvas.height, player);
+    const game = createGame(canvas.width, canvas.height, player, ammoStartSize);
 
-    ih.initListener(game.keys);
+    ih.initListener(game.keys, game.shootKey);
 
     function animate(){
         ctx.clearRect(0,0, canvas.width, canvas.height);
@@ -23,23 +24,4 @@ window.addEventListener('load', function (){
     }
 
     animate();
-    console.log("Salam!!!");
-
 })
-
-
-
-
-
-
-// const canvas : HTMLCanvasElement = document.querySelector("#gameCanvas")!;
-// const width =  window.innerWidth;
-// const height = window.innerHeight;
-
-// canvas.width = width;
-// canvas.height = height;
-
-// const ctx = canvas.getContext("2d")!;
-// ctx.fillStyle = "rgb(0 0 255)";
-// ctx.fillRect(0, 0, width, height);
-

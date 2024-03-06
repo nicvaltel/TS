@@ -1,34 +1,26 @@
+import { drawActor } from "./types.js";
+export class Player {
+    constructor(x, y, width, height, speedY, maxSpeed, projectiles) {
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+        this.speedY = speedY;
+        this.maxSpeed = maxSpeed;
+        this.projectiles = projectiles;
+    }
+}
 export const player = {
-    width: 120,
-    height: 190,
     x: 20,
     y: 100,
+    width: 120,
+    height: 190,
     speedY: 0,
     maxSpeed: 8,
+    projectiles: [],
 };
-export function updatePlayer(player, keys, gameHeight) {
-    if (keys.includes('ArrowUp')) {
-        player.speedY = -player.maxSpeed;
-    }
-    else if (keys.includes('ArrowDown')) {
-        player.speedY = player.maxSpeed;
-    }
-    else {
-        player.speedY = 0;
-    }
-    player.y += player.speedY;
-    if (player.y > gameHeight - player.height * 0.5) {
-        player.y = gameHeight - player.height * 0.5;
-    }
-    else if (player.y < -player.height * 0.5) {
-        player.y = -player.height * 0.5;
-    }
-    return player;
-}
 export function drawPlayer(ctx, player) {
-    ctx.fillRect(player.x, player.y, player.width, player.height);
-    return { io: {} };
+    ctx.fillStyle = 'black';
+    drawActor(ctx, player);
+    return {};
 }
-// export function drawPlayer(ctx: CanvasRenderingContext2D, player: Player): void {
-//     ctx.fillRect(player.x, player.y, player.width, player.height);
-// }
